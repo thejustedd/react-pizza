@@ -8,3 +8,10 @@ export interface Pizza {
   category: number;
   rating: number;
 }
+
+export interface SortType {
+  label: string;
+  property: string;
+}
+
+export const categories = ['Все', 'Мясные', 'Вегетарианские', 'Гриль', 'Острые', 'Закрытые'];

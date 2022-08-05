@@ -1,30 +1,41 @@
 @import '../variables';
 
 .categories {
+  flex: 1 0 auto;
+  @media (max-width: 1023.98px) {
+    overflow-x: auto;
+    width: 100%;
+  }
+
   ul {
     display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    @media (max-width: 1023.98px) {
+      flex-wrap: nowrap;
+    }
 
     li {
-      background-color: #F9F9F9;
+      background-color: #f9f9f9;
       padding: 13px 30px;
       border-radius: 30px;
-      margin-right: 10px;
       font-weight: bold;
       cursor: pointer;
       transition: background-color 0.1s ease-in-out;
       @include noselect();
 
       &:hover {
-        background-color: darken(#F9F9F9, 2%);
+        background-color: darken(#f9f9f9, 2%);
       }
 
       &:active {
-        background-color: darken(#F9F9F9, 5%);
+        background-color: darken(#f9f9f9, 5%);
       }
 
       &.active {
         background-color: #282828;
-        color: #FFF;
+        color: #fff;
       }
     }
   }

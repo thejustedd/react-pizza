@@ -4,10 +4,16 @@
   border-bottom: 1px solid $gray-line;
   padding: 40px 0;
 
+  @media (max-width: 424.98px) {
+    padding: 40px 0 25px;
+  }
+
   .container {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
   }
 
   &__logo {
@@ -28,5 +34,10 @@
     p {
       color: #7b7b7b;
     }
+  }
+
+  &__cart {
+    flex-shrink: 0;
+    margin-left: auto;
   }
 }

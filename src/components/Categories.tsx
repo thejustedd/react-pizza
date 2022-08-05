@@ -1,21 +1,28 @@
-import React, { useState } from 'react';
+import React, { FC } from 'react';
+import { categories } from '../models';
+import { CustomSimpleBar } from './CustomSimpleBar';
 
-const Categories = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const categories = ['Все', 'Мясные', 'Вегетарианская', 'Гриль', 'Острые', 'Закрытые'];
+interface CategoriesProps {
+  categoryId: number;
+  setCategoryId: (index: number) => void;
+}
 
+const Categories: FC<CategoriesProps> = ({ categoryId, setCategoryId }) => {
   return (
+    // Todo
     <div className="categories">
-      <ul>
-        {categories.map((category, index) => (
-          <li
-            key={index}
-            className={index === activeIndex ? 'active' : ''}
-            onClick={() => setActiveIndex(index)}>
-            {category}
-          </li>
-        ))}
-      </ul>
+      <CustomSimpleBar>
+        <ul>
+          {categories.map((categoryName, index) => (
+            <li
+              key={index}
+              className={index === categoryId ? 'active' : ''}
+              onClick={() => setCategoryId(index)}>
+              {categoryName}
+            </li>
+          ))}
+        </ul>
+      </CustomSimpleBar>
     </div>
   );
 };

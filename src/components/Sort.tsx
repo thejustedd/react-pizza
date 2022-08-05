@@ -1,16 +1,28 @@
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
+import { SortType } from '../models';
 
-const Sort = () => {
+interface SortProps {
+  sortType: SortType;
+  setSortType: (sortType: SortType) => void;
+}
+
+const Sort: FC<SortProps> = ({ sortType, setSortType }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [activeFilterIndex, setActiveFilterIndex] = useState(0);
-  const filterNames = ['популярности', 'цене', 'алфавиту'];
+  const sortMethods: SortType[] = [
+    { label: 'популярности 🠕', property: 'rating+' },
+    { label: 'популярности 🠗', property: 'rating-' },
+    { label: 'цене 🠕', property: 'price+' },
+    { label: 'цене 🠗', property: 'price-' },
+    { label: 'алфавиту 🠕', property: 'title+' },
+    { label: 'алфавиту 🠗', property: 'title-' },
+  ];
 
   function toggleVisibility() {
     setIsVisible((prevState) => !prevState);
   }
 
-  function choiceFilter(index: number) {
-    setActiveFilterIndex(index);
+  function choiceFilter(sortType: SortType) {
+    setSortType(sortType);
     setIsVisible(false);
   }
 
@@ -29,17 +41,17 @@ const Sort = () => {
           />
         </svg>
         <b>Сортировка по:</b>
-        <span onClick={toggleVisibility}>{filterNames[activeFilterIndex]}</span>
+        <span onClick={toggleVisibility}>{sortType.label}</span>
       </div>
       {isVisible && (
         <div className="sort__popup">
           <ul>
-            {filterNames.map((filterName, index) => (
+            {sortMethods.map((sortMethod) => (
               <li
-                key={index}
-                className={index === activeFilterIndex ? 'active' : ''}
-                onClick={() => choiceFilter(index)}>
-                {filterName}
+                key={sortMethod.property}
+                onClick={() => choiceFilter(sortMethod)}
+                className={sortMethod.property === sortType.property ? 'active' : ''}>
+                {sortMethod.label}
               </li>
             ))}
           </ul>
