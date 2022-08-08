@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { FC, RefObject } from 'react';
 import SimpleBar from 'simplebar-react';
+import { isMobileDevice } from '../utils';
 
 interface CartProps {
   appScrollbar: RefObject<SimpleBar>;
@@ -8,7 +9,9 @@ interface CartProps {
 
 const Cart: FC<CartProps> = ({ appScrollbar }) => {
   function scrollToTop() {
-    appScrollbar.current?.getScrollElement().scrollTo({ top: 0 });
+    isMobileDevice
+      ? window.scrollTo(0, 0)
+      : appScrollbar.current?.getScrollElement().scrollTo({ top: 0 });
   }
 
   return (

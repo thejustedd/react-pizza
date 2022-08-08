@@ -9,12 +9,12 @@ interface SortProps {
 const Sort: FC<SortProps> = ({ sortType, setSortType }) => {
   const [isVisible, setIsVisible] = useState(false);
   const sortMethods: SortType[] = [
-    { label: 'популярности 🠕', property: 'rating+' },
-    { label: 'популярности 🠗', property: 'rating-' },
-    { label: 'цене 🠕', property: 'price+' },
-    { label: 'цене 🠗', property: 'price-' },
-    { label: 'алфавиту 🠕', property: 'title+' },
-    { label: 'алфавиту 🠗', property: 'title-' },
+    { label: 'популярности +', property: 'rating+' },
+    { label: 'популярности -', property: 'rating-' },
+    { label: 'цене +', property: 'price+' },
+    { label: 'цене -', property: 'price-' },
+    { label: 'алфавиту +', property: 'title+' },
+    { label: 'алфавиту -', property: 'title-' },
   ];
 
   function toggleVisibility() {
@@ -30,6 +30,7 @@ const Sort: FC<SortProps> = ({ sortType, setSortType }) => {
     <div className="sort">
       <div className="sort__label">
         <svg
+          className={`sort__arrow ${isVisible ? 'sort__arrow--rotated' : ''}`}
           width="10"
           height="6"
           viewBox="0 0 10 6"

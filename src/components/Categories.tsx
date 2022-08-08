@@ -5,11 +5,16 @@ import { CustomSimpleBar } from './CustomSimpleBar';
 interface CategoriesProps {
   categoryId: number;
   setCategoryId: (index: number) => void;
+  setCurrentPage: (page: number) => void;
 }
 
-const Categories: FC<CategoriesProps> = ({ categoryId, setCategoryId }) => {
+const Categories: FC<CategoriesProps> = ({ categoryId, setCategoryId, setCurrentPage }) => {
+  function changeCategory(id: number) {
+    setCategoryId(id);
+    setCurrentPage(1);
+  }
+
   return (
-    // Todo
     <div className="categories">
       <CustomSimpleBar>
         <ul>
@@ -17,7 +22,7 @@ const Categories: FC<CategoriesProps> = ({ categoryId, setCategoryId }) => {
             <li
               key={index}
               className={index === categoryId ? 'active' : ''}
-              onClick={() => setCategoryId(index)}>
+              onClick={changeCategory.bind(null, index)}>
               {categoryName}
             </li>
           ))}

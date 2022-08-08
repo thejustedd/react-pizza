@@ -4,14 +4,20 @@
   position: relative;
   margin-left: auto;
 
+  &__arrow {
+    margin-right: 8px;
+    transform: rotate(0deg);
+    transition: rotate 0.3s ease-out; // Todo -> Not Working
+
+    &--rotated {
+      transform: rotate(180deg);
+    }
+  }
+
   &__label {
-    min-width: 265px;
+    min-width: 270px;
     display: flex;
     align-items: center;
-
-    svg {
-      margin-right: 8px;
-    }
 
     b {
       margin-right: 8px;

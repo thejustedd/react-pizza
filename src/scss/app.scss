@@ -26,14 +26,10 @@ body {
 }
 
 .content {
-  padding: 40px 0 80px;
-
-  @media (max-width: 767.98px) {
-    padding-bottom: 60px;
-  }
+  padding: 40px 0;
 
   @media (max-width: 424.98px) {
-    padding: 25px 0 40px;
+    padding-top: 25px;
   }
 
   &__title {
@@ -44,10 +40,14 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fill, 280px);
     justify-content: center;
-    gap: 65px 45px;
+    gap: 60px 45px;
 
     @media (max-width: 424.98px) {
       gap: 40px;
+    }
+
+    &:not(:last-child) {
+      margin-bottom: 45px;
     }
   }
 
