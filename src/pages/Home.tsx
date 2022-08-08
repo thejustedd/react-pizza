@@ -1,15 +1,15 @@
 import { Categories } from '../components/Categories';
 import { Sort } from '../components/Sort';
 import { PizzaBlock, Skeleton } from '../components/PizzaBlock';
-import React, { FC, ReactNode, useEffect, useRef, useState } from 'react';
+import React, { FC, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { categories, Pizza, SortType } from '../models';
 import { Pagination } from '../components/Pagination';
+import { SearchContext } from '../App';
 
-interface HomeProps {
-  searchValue: string;
-}
+interface HomeProps {}
 
-const Home: FC<HomeProps> = ({ searchValue }) => {
+const Home: FC<HomeProps> = () => {
+  const { searchValue } = useContext(SearchContext)!;
   const [pizzas, setPizzas] = useState<Pizza[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);

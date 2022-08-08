@@ -1,12 +1,12 @@
 import styles from './Search.module.scss';
-import { ChangeEvent, FC } from 'react';
+import { ChangeEvent, FC, useContext } from 'react';
+import { SearchContext } from '../../App';
 
-interface SearchProps {
-  searchValue: string;
-  setSearchValue: (searchValue: string) => void;
-}
+interface SearchProps {}
 
-const Search: FC<SearchProps> = ({ searchValue, setSearchValue }) => {
+const Search: FC<SearchProps> = () => {
+  const { searchValue, setSearchValue } = useContext(SearchContext)!;
+
   function search(e: ChangeEvent<HTMLInputElement>) {
     setSearchValue(e.target.value);
   }
