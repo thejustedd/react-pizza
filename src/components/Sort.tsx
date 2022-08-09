@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react';
-import { sortMethods, SortType } from '../models';
+import { Order, sortLabel, sortMethods, SortProperty, SortType } from '../models';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { setSortType } from '../redux/slices/filterSlice';
@@ -7,7 +7,7 @@ import { setSortType } from '../redux/slices/filterSlice';
 interface SortProps {}
 
 const Sort: FC<SortProps> = () => {
-  const sortType = useSelector((state: RootState) => state.filter.sortType);
+  const { property, order } = useSelector((state: RootState) => state.filter.sortType);
   const dispatch = useDispatch();
   const [isVisible, setIsVisible] = useState(false);
 
@@ -18,6 +18,10 @@ const Sort: FC<SortProps> = () => {
   function choiceFilter(sortType: SortType) {
     dispatch(setSortType(sortType));
     setIsVisible(false);
+  }
+
+  function getSortLabel(property: SortProperty, order: Order) {
+    return `${sortLabel[property]} ${order === 'asc' ? '+' : '-'}`;
   }
 
   return (
@@ -36,17 +40,19 @@ const Sort: FC<SortProps> = () => {
           />
         </svg>
         <b>Сортировка по:</b>
-        <span onClick={toggleVisibility}>{sortType.label}</span>
+        <span onClick={toggleVisibility}>{getSortLabel(property, order)}</span>
       </div>
       {isVisible && (
         <div className="sort__popup">
           <ul>
-            {sortMethods.map((sortMethod) => (
+            {sortMethods.map((sortMethod, index) => (
               <li
-                key={sortMethod.property}
+                key={index}
                 onClick={() => choiceFilter(sortMethod)}
-                className={sortMethod.property === sortType.property ? 'active' : ''}>
-                {sortMethod.label}
+                className={
+                  sortMethod.property === property && sortMethod.order === order ? 'active' : ''
+                }>
+                {getSortLabel(sortMethod.property, sortMethod.order)}
               </li>
             ))}
           </ul>

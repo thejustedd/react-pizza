@@ -29,9 +29,9 @@ const Home: FC<HomeProps> = () => {
   useEffect(() => {
     setIsLoading(true);
 
-    const order = sortType.property.includes('-') ? 'desc' : 'asc';
+    const order = sortType.order;
     const categoryRequest = categoryId ? `&category=${categoryId}` : '';
-    const sortRequest = `sortBy=${sortType.property.slice(0, -1)}`;
+    const sortRequest = `sortBy=${sortType.property}`;
     const orderRequest = `order=${order}`;
     const request = `page=${currentPage}&${sortRequest}&${orderRequest}${categoryRequest}`;
 
@@ -44,7 +44,7 @@ const Home: FC<HomeProps> = () => {
         setPizzas(getItemsPerPage(itemsFilteredByTitle));
         setIsLoading(false);
       });
-  }, [categoryId, sortType.property, searchValue, currentPage]);
+  }, [categoryId, sortType, searchValue, currentPage]);
 
   useEffect(() => {
     currentPage !== 1 && changePage(1);

@@ -13,7 +13,7 @@ const Search: FC<SearchProps> = () => {
   useEffect(() => inputRef.current?.focus(), []);
 
   const updateSearchValue = useCallback(
-    debounce((value: string) => setSearchValue(value), 350),
+    debounce((value: string) => setSearchValue(value), 250),
     [],
   );
 
