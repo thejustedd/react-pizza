@@ -1,14 +1,31 @@
 import styles from './Search.module.scss';
-import { ChangeEvent, FC } from 'react';
+import { ChangeEvent, FC, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { SearchContext } from '../../App';
+import debounce from 'lodash.debounce';
 
-interface SearchProps {
-  searchValue: string;
-  setSearchValue: (searchValue: string) => void;
-}
+interface SearchProps {}
 
-const Search: FC<SearchProps> = ({ searchValue, setSearchValue }) => {
+const Search: FC<SearchProps> = () => {
+  const [value, setValue] = useState('');
+  const { setSearchValue } = useContext(SearchContext)!;
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => inputRef.current?.focus(), []);
+
+  const updateSearchValue = useCallback(
+    debounce((value: string) => setSearchValue(value), 350),
+    [],
+  );
+
   function search(e: ChangeEvent<HTMLInputElement>) {
-    setSearchValue(e.target.value);
+    setValue(e.target.value);
+    updateSearchValue(e.target.value);
+  }
+
+  function clearField() {
+    setValue('');
+    setSearchValue('');
+    inputRef.current?.focus();
   }
 
   return (
@@ -25,7 +42,6 @@ const Search: FC<SearchProps> = ({ searchValue, setSearchValue }) => {
             cx="14"
             cy="14"
             fill="none"
-            id="XMLID_42_"
             r="9"
             stroke="#000000"
             strokeLinecap="round"
@@ -35,7 +51,6 @@ const Search: FC<SearchProps> = ({ searchValue, setSearchValue }) => {
           />
           <line
             fill="none"
-            id="XMLID_44_"
             stroke="#000000"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -52,14 +67,15 @@ const Search: FC<SearchProps> = ({ searchValue, setSearchValue }) => {
           className={styles.input}
           type="text"
           placeholder="Поиск пиццы..."
-          value={searchValue}
+          value={value}
           onChange={search}
+          ref={inputRef}
         />
 
-        {!!searchValue && (
+        {!!value && (
           <svg
             className={`${styles.icon} ${styles.clearIcon}`}
-            onClick={() => setSearchValue('')}
+            onClick={clearField}
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20">
             <path d="M10 8.586L2.929 1.515 1.515 2.929 8.586 10l-7.071 7.071 1.414 1.414L10 11.414l7.071 7.071 1.414-1.414L11.414 10l7.071-7.071-1.414-1.414L10 8.586z" />
