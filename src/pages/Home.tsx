@@ -1,33 +1,28 @@
 import { Categories } from '../components/Categories';
 import { Sort } from '../components/Sort';
 import { PizzaBlock, Skeleton } from '../components/PizzaBlock';
-import React, { FC, ReactNode, useContext, useEffect, useRef, useState } from 'react';
-import { categories, Pizza, SortType } from '../models';
+import React, { FC, useContext, useEffect, useRef, useState } from 'react';
+import { categories, GetPizzas, Pizza } from '../models';
 import { Pagination } from '../components/Pagination';
 import { SearchContext } from '../App';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../redux/store';
+import { setCategoryId, setCurrentPage } from '../redux/slices/filterSlice';
+import axios from 'axios';
+import { filterByTitle } from '../utils';
 
 interface HomeProps {}
 
 const Home: FC<HomeProps> = () => {
+  const { categoryId, sortType, currentPage } = useSelector((state: RootState) => state.filter);
+  const dispatch = useDispatch<AppDispatch>();
   const { searchValue } = useContext(SearchContext)!;
   const [pizzas, setPizzas] = useState<Pizza[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [categoryId, setCategoryId] = useState(0);
-  const [sortType, setSortType] = useState<SortType>({
-    label: 'популярности +',
-    property: 'rating+',
-  });
-
   const [itemsPerCategory, setItemsPerCategory] = useState(0);
   const itemsPerPage = useRef(12).current;
-
-  function getPageCount() {
-    return itemsPerCategory ? Math.ceil(itemsPerCategory / itemsPerPage) : 1;
-  }
-
   const items = pizzas.map((pizza) => <PizzaBlock key={pizza.id} pizza={pizza} />);
-  const skeletons = Array(6)
+  const skeletons = Array(itemsPerPage)
     .fill(null)
     .map((_, index) => <Skeleton key={index} />);
 
@@ -40,23 +35,24 @@ const Home: FC<HomeProps> = () => {
     const orderRequest = `order=${order}`;
     const request = `page=${currentPage}&${sortRequest}&${orderRequest}${categoryRequest}`;
 
-    fetch(`https://6290adf9665ea71fe1385b55.mockapi.io/items?${request}`)
-      .then((res) => res.json())
-      .then((json) => {
-        const filterByTitle = (item: Pizza) =>
-          item.title.toLowerCase().includes(searchValue.toLowerCase());
-        const itemsFilteredByTitle = (json.items as Pizza[]).filter(filterByTitle);
+    axios
+      .get<GetPizzas>(`https://6290adf9665ea71fe1385b55.mockapi.io/items?${request}`)
+      .then((res) => {
+        const itemsFilteredByTitle = res.data.items.filter((i) => filterByTitle(i, searchValue));
 
-        // setItemsPerCategory(json.count);
         setItemsPerCategory(itemsFilteredByTitle.length);
         setPizzas(getItemsPerPage(itemsFilteredByTitle));
         setIsLoading(false);
       });
-  }, [categoryId, sortType, searchValue, currentPage]);
+  }, [categoryId, sortType.property, searchValue, currentPage]);
 
   useEffect(() => {
-    currentPage !== 1 && setCurrentPage(1);
+    currentPage !== 1 && changePage(1);
   }, [searchValue]);
+
+  function getPageCount() {
+    return itemsPerCategory ? Math.ceil(itemsPerCategory / itemsPerPage) : 1;
+  }
 
   function getItemsPerPage(items: Pizza[]) {
     return items.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -66,8 +62,12 @@ const Home: FC<HomeProps> = () => {
     return categories[categoryId];
   }
 
-  function contentItemsBlock(children: ReactNode) {
-    return <div className="content__items">{children}</div>;
+  function changeCategory(id: number) {
+    dispatch(setCategoryId(id));
+  }
+
+  function changePage(page: number) {
+    dispatch(setCurrentPage(page));
   }
 
   return (
@@ -76,26 +76,20 @@ const Home: FC<HomeProps> = () => {
         <div className="content__top">
           <Categories
             categoryId={categoryId}
-            setCategoryId={setCategoryId}
-            setCurrentPage={setCurrentPage}
+            setCategoryId={changeCategory}
+            setCurrentPage={changePage}
           />
-          <Sort sortType={sortType} setSortType={setSortType} />
+          <Sort />
         </div>
         <h2 className="content__title">
           {getCategoryName()} пиццы ({itemsPerCategory})
         </h2>
-        {isLoading ? (
-          contentItemsBlock(skeletons)
-        ) : items.length ? (
-          contentItemsBlock(items)
-        ) : (
+        {!isLoading && !items.length ? (
           <p style={{ marginBottom: '60px' }}>К сожалению такой пиццы нет</p>
+        ) : (
+          <div className="content__items">{isLoading ? skeletons : items}</div>
         )}
-        <Pagination
-          currentPage={currentPage}
-          pageCount={getPageCount()}
-          changePage={(page) => setCurrentPage(page)}
-        />
+        <Pagination currentPage={currentPage} pageCount={getPageCount()} changePage={changePage} />
       </div>
     </>
   );

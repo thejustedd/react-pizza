@@ -1,28 +1,22 @@
 import React, { FC, useState } from 'react';
-import { SortType } from '../models';
+import { sortMethods, SortType } from '../models';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import { setSortType } from '../redux/slices/filterSlice';
 
-interface SortProps {
-  sortType: SortType;
-  setSortType: (sortType: SortType) => void;
-}
+interface SortProps {}
 
-const Sort: FC<SortProps> = ({ sortType, setSortType }) => {
+const Sort: FC<SortProps> = () => {
+  const sortType = useSelector((state: RootState) => state.filter.sortType);
+  const dispatch = useDispatch();
   const [isVisible, setIsVisible] = useState(false);
-  const sortMethods: SortType[] = [
-    { label: 'популярности +', property: 'rating+' },
-    { label: 'популярности -', property: 'rating-' },
-    { label: 'цене +', property: 'price+' },
-    { label: 'цене -', property: 'price-' },
-    { label: 'алфавиту +', property: 'title+' },
-    { label: 'алфавиту -', property: 'title-' },
-  ];
 
   function toggleVisibility() {
     setIsVisible((prevState) => !prevState);
   }
 
   function choiceFilter(sortType: SortType) {
-    setSortType(sortType);
+    dispatch(setSortType(sortType));
     setIsVisible(false);
   }
 
