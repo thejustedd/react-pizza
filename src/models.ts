@@ -16,15 +16,25 @@ export interface GetPizzas {
 
 export const categories = ['Все', 'Мясные', 'Вегетарианские', 'Гриль', 'Острые', 'Закрытые'];
 
+export type SortProperty = 'rating' | 'price' | 'title';
+export type Order = 'asc' | 'desc';
+
 export interface SortType {
-  label: string;
-  property: string;
+  property: SortProperty;
+  order: Order;
 }
+
 export const sortMethods: SortType[] = [
-  { label: 'популярности +', property: 'rating+' },
-  { label: 'популярности -', property: 'rating-' },
-  { label: 'цене +', property: 'price+' },
-  { label: 'цене -', property: 'price-' },
-  { label: 'алфавиту +', property: 'title+' },
-  { label: 'алфавиту -', property: 'title-' },
+  { property: 'rating', order: 'asc' },
+  { property: 'rating', order: 'desc' },
+  { property: 'price', order: 'asc' },
+  { property: 'price', order: 'desc' },
+  { property: 'title', order: 'asc' },
+  { property: 'title', order: 'desc' },
 ];
+
+export const sortLabel = {
+  rating: 'популярности',
+  price: 'цене',
+  title: 'алфавиту',
+};

@@ -7,9 +7,10 @@ import { Pagination } from '../components/Pagination';
 import { SearchContext } from '../App';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
-import { setCategoryId, setCurrentPage } from '../redux/slices/filterSlice';
+import { setCategoryId, setCurrentPage, setFilters } from '../redux/slices/filterSlice';
 import axios from 'axios';
 import { filterByTitle } from '../utils';
+import { useSearchParams } from 'react-router-dom';
 
 interface HomeProps {}
 
@@ -17,6 +18,7 @@ const Home: FC<HomeProps> = () => {
   const { categoryId, sortType, currentPage } = useSelector((state: RootState) => state.filter);
   const dispatch = useDispatch<AppDispatch>();
   const { searchValue } = useContext(SearchContext)!;
+  const [searchParams, setSearchParams] = useSearchParams();
   const [pizzas, setPizzas] = useState<Pizza[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [itemsPerCategory, setItemsPerCategory] = useState(0);
@@ -27,13 +29,30 @@ const Home: FC<HomeProps> = () => {
     .map((_, index) => <Skeleton key={index} />);
 
   useEffect(() => {
+    const page = Number(searchParams.get('page')) || currentPage;
+    const category = Number(searchParams.get('category')) || categoryId;
+    const sortBy = searchParams.get('sortBy') || sortType.property;
+    const order = searchParams.get('order') || sortType.order;
+
+    // dispatch(setCurrentPage(page));
+    // dispatch(setCategoryId(category));
+    // dispatch(setSortType({ property: sortBy, order }));
+
+    dispatch(
+      setFilters({
+        currentPage: page,
+        categoryId: category,
+        sortType: { property: sortBy, order },
+      }),
+    );
+  }, []);
+
+  function fetchPizzas() {
     setIsLoading(true);
 
-    const order = sortType.property.includes('-') ? 'desc' : 'asc';
-    const categoryRequest = categoryId ? `&category=${categoryId}` : '';
-    const sortRequest = `sortBy=${sortType.property.slice(0, -1)}`;
-    const orderRequest = `order=${order}`;
-    const request = `page=${currentPage}&${sortRequest}&${orderRequest}${categoryRequest}`;
+    const request = `page=${currentPage}&sortBy=${sortType.property}&order=${sortType.order}${
+      categoryId ? `&category=${categoryId}` : ''
+    }`;
 
     axios
       .get<GetPizzas>(`https://6290adf9665ea71fe1385b55.mockapi.io/items?${request}`)
@@ -44,7 +63,11 @@ const Home: FC<HomeProps> = () => {
         setPizzas(getItemsPerPage(itemsFilteredByTitle));
         setIsLoading(false);
       });
-  }, [categoryId, sortType.property, searchValue, currentPage]);
+  }
+
+  useEffect(() => {
+    fetchPizzas();
+  }, [currentPage, sortType, categoryId, searchValue]);
 
   useEffect(() => {
     currentPage !== 1 && changePage(1);
@@ -68,6 +91,8 @@ const Home: FC<HomeProps> = () => {
 
   function changePage(page: number) {
     dispatch(setCurrentPage(page));
+    searchParams.set('page', page.toString());
+    setSearchParams(searchParams);
   }
 
   return (
@@ -85,7 +110,7 @@ const Home: FC<HomeProps> = () => {
           {getCategoryName()} пиццы ({itemsPerCategory})
         </h2>
         {!isLoading && !items.length ? (
-          <p style={{ marginBottom: '60px' }}>К сожалению такой пиццы нет</p>
+          <p style={{ marginBottom: '60px' }}>К сожалению по заданным фильтрам пиццы не найдено</p>
         ) : (
           <div className="content__items">{isLoading ? skeletons : items}</div>
         )}
