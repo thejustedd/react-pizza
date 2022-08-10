@@ -1,6 +1,7 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import { categories } from '../models';
 import { CustomSimpleBar } from './CustomSimpleBar';
+import { useSearchParams } from 'react-router-dom';
 
 interface CategoriesProps {
   categoryId: number;
@@ -8,28 +9,36 @@ interface CategoriesProps {
   setCurrentPage: (page: number) => void;
 }
 
-const Categories: FC<CategoriesProps> = ({ categoryId, setCategoryId, setCurrentPage }) => {
-  function changeCategory(id: number) {
-    setCategoryId(id);
-    setCurrentPage(1);
-  }
+const Categories: FC<CategoriesProps> = memo(
+  ({ categoryId, setCategoryId, setCurrentPage }) => {
+    const [searchParams, setSearchParams] = useSearchParams();
 
-  return (
-    <div className="categories">
-      <CustomSimpleBar>
-        <ul>
-          {categories.map((categoryName, index) => (
-            <li
-              key={index}
-              className={index === categoryId ? 'active' : ''}
-              onClick={changeCategory.bind(null, index)}>
-              {categoryName}
-            </li>
-          ))}
-        </ul>
-      </CustomSimpleBar>
-    </div>
-  );
-};
+    function changeCategory(id: number) {
+      setCurrentPage(1);
+      setCategoryId(id);
+      searchParams.set('category', id.toString());
+      searchParams.set('page', '1');
+      setSearchParams(searchParams);
+    }
+
+    return (
+      <div className="categories">
+        <CustomSimpleBar>
+          <ul>
+            {categories.map((categoryName, index) => (
+              <li
+                key={index}
+                className={index === categoryId ? 'active' : ''}
+                onClick={changeCategory.bind(null, index)}>
+                {categoryName}
+              </li>
+            ))}
+          </ul>
+        </CustomSimpleBar>
+      </div>
+    );
+  },
+  (prevProps, nextProps) => prevProps.categoryId === nextProps.categoryId,
+);
 
 export { Categories };

@@ -1,12 +1,14 @@
-import React, { FC, useState } from 'react';
+import React, { FC, memo, useState } from 'react';
 import { Order, sortLabel, sortMethods, SortProperty, SortType } from '../models';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { setSortType } from '../redux/slices/filterSlice';
+import { useSearchParams } from 'react-router-dom';
 
 interface SortProps {}
 
-const Sort: FC<SortProps> = () => {
+const Sort: FC<SortProps> = memo(() => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const { property, order } = useSelector((state: RootState) => state.filter.sortType);
   const dispatch = useDispatch();
   const [isVisible, setIsVisible] = useState(false);
@@ -18,10 +20,13 @@ const Sort: FC<SortProps> = () => {
   function choiceFilter(sortType: SortType) {
     dispatch(setSortType(sortType));
     setIsVisible(false);
+    searchParams.set('sortBy', sortType.property);
+    searchParams.set('order', sortType.order);
+    setSearchParams(searchParams);
   }
 
   function getSortLabel(property: SortProperty, order: Order) {
-    return `${sortLabel[property]} ${order === 'asc' ? '+' : '-'}`;
+    return `${sortLabel[property]} ${order === 'desc' ? '-' : '+'}`;
   }
 
   return (
@@ -60,6 +65,6 @@ const Sort: FC<SortProps> = () => {
       )}
     </div>
   );
-};
+});
 
 export { Sort };
