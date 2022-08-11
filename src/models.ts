@@ -15,6 +15,7 @@ export interface GetPizzas {
 }
 
 export const categories = ['Все', 'Мясные', 'Вегетарианские', 'Гриль', 'Острые', 'Закрытые'];
+export const typeNames = ['тонкое', 'традиционное'];
 
 export type SortProperty = 'rating' | 'price' | 'title';
 export type Order = 'asc' | 'desc';

@@ -1,14 +1,33 @@
 import React, { FC, useState } from 'react';
-import { Pizza } from '../../models';
+import { Pizza, typeNames } from '../../models';
+import { RootState, useAppDispatch } from '../../redux/store';
+import { addCartItem } from '../../redux/slices/cartSlice';
+import { useSelector } from 'react-redux';
 
 interface PizzaBlockProps {
   pizza: Pizza;
 }
 
 const PizzaBlock: FC<PizzaBlockProps> = ({ pizza }) => {
-  const [activeSizesIndex, setActiveSizesIndex] = useState(0);
-  const [activeTypesIndex, setActiveTypesIndex] = useState(pizza.types[0]);
-  const typeNames = ['тонкое', 'традиционное'];
+  const [activeSizeIndex, setActiveSizeIndex] = useState(0);
+  const [activeTypeIndex, setActiveTypeIndex] = useState(pizza.types[0]);
+  const dispatch = useAppDispatch();
+  const cartItem = useSelector(
+    (state: RootState) => state.cart.items.find((item) => item.id === pizza.id)!,
+  );
+  const addedCount = cartItem ? cartItem.count : 0;
+
+  function addToCart() {
+    const item = {
+      id: pizza.id,
+      title: pizza.title,
+      price: pizza.price,
+      imageUrl: pizza.imageUrl,
+      type: typeNames[activeTypeIndex],
+      size: pizza.sizes[activeSizeIndex],
+    };
+    dispatch(addCartItem(item));
+  }
 
   return (
     <div className="pizza-block">
@@ -19,8 +38,8 @@ const PizzaBlock: FC<PizzaBlockProps> = ({ pizza }) => {
           {pizza.types.map((typeIndex) => (
             <li
               key={typeIndex}
-              className={activeTypesIndex === typeIndex ? 'active' : ''}
-              onClick={() => setActiveTypesIndex(typeIndex)}>
+              className={activeTypeIndex === typeIndex ? 'active' : ''}
+              onClick={() => setActiveTypeIndex(typeIndex)}>
               {typeNames[typeIndex]}
             </li>
           ))}
@@ -29,8 +48,8 @@ const PizzaBlock: FC<PizzaBlockProps> = ({ pizza }) => {
           {pizza.sizes.map((size, index) => (
             <li
               key={index}
-              className={index === activeSizesIndex ? 'active' : ''}
-              onClick={() => setActiveSizesIndex(index)}>
+              className={index === activeSizeIndex ? 'active' : ''}
+              onClick={() => setActiveSizeIndex(index)}>
               {size} см.
             </li>
           ))}
@@ -38,7 +57,7 @@ const PizzaBlock: FC<PizzaBlockProps> = ({ pizza }) => {
       </div>
       <div className="pizza-block__bottom">
         <div className="pizza-block__price">от {pizza.price} ₽</div>
-        <button className="button button--outline button--add">
+        <button className="button button--outline button--add" onClick={addToCart}>
           <svg
             width="12"
             height="12"
@@ -51,7 +70,7 @@ const PizzaBlock: FC<PizzaBlockProps> = ({ pizza }) => {
             />
           </svg>
           <span>Добавить</span>
-          <i>2</i>
+          {addedCount > 0 && <i>{addedCount}</i>}
         </button>
       </div>
     </div>

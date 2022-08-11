@@ -1,15 +1,15 @@
 import React, { FC, memo } from 'react';
 import { categories } from '../models';
 import { CustomSimpleBar } from './CustomSimpleBar';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
+import { useSelector } from 'react-redux';
+import { RootState, useAppDispatch } from '../redux/store';
 import { changeCategoryId } from '../redux/slices/filterSlice';
 
 interface CategoriesProps {}
 
 const Categories: FC<CategoriesProps> = memo(() => {
   const categoryId = useSelector((state: RootState) => state.filter.categoryId);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   function changeCategory(index: number) {
     dispatch(changeCategoryId(index));

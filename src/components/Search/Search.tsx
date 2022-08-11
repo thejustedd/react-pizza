@@ -1,15 +1,15 @@
 import styles from './Search.module.scss';
 import { ChangeEvent, FC, useCallback, useEffect, useRef, useState } from 'react';
 import debounce from 'lodash.debounce';
-import { useDispatch } from 'react-redux';
 import { changeSearchValue } from '../../redux/slices/filterSlice';
+import { useAppDispatch } from '../../redux/store';
 
 interface SearchProps {}
 
 const Search: FC<SearchProps> = () => {
   const [value, setValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => inputRef.current?.focus(), []);
 

@@ -1,8 +1,8 @@
 import styles from './Pagination.module.scss';
 import ReactPaginate from 'react-paginate';
-import { FC, memo, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
+import { FC, memo } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState, useAppDispatch } from '../../redux/store';
 import { setCurrentPage } from '../../redux/slices/filterSlice';
 
 interface PaginationProps {
@@ -12,7 +12,7 @@ interface PaginationProps {
 const Pagination: FC<PaginationProps> = memo(
   ({ pageCount }) => {
     const currentPage = useSelector((state: RootState) => state.filter.currentPage);
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     if (currentPage > pageCount || currentPage < 1) return null;
 

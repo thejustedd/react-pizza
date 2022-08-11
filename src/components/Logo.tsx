@@ -1,18 +1,18 @@
 import React, { FC, MouseEvent } from 'react';
 import logoSvg from '../assets/img/pizza-logo.svg';
-import { useDispatch } from 'react-redux';
-import { initialState, setFilters } from '../redux/slices/filterSlice';
+import { initialFilterState, setFilters } from '../redux/slices/filterSlice';
 import { useNavigate } from 'react-router-dom';
+import { useAppDispatch } from '../redux/store';
 
 interface LogoProps {}
 
 const Logo: FC<LogoProps> = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   function handleClick(e: MouseEvent<HTMLAnchorElement>) {
     e.preventDefault();
-    dispatch(setFilters(initialState));
+    dispatch(setFilters(initialFilterState));
     navigate('/');
   }
 

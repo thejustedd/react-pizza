@@ -2,11 +2,11 @@ import { Categories } from '../components/Categories';
 import { Sort } from '../components/Sort';
 import { PizzaBlock, Skeleton } from '../components/PizzaBlock';
 import React, { FC, useEffect, useRef, useState } from 'react';
-import { categories, GetPizzas, Pizza } from '../models';
+import { categories, GetPizzas, Order, Pizza, SortProperty } from '../models';
 import { Pagination } from '../components/Pagination';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../redux/store';
-import { initialState, setFilters } from '../redux/slices/filterSlice';
+import { useSelector } from 'react-redux';
+import { RootState, useAppDispatch } from '../redux/store';
+import { initialFilterState, setFilters } from '../redux/slices/filterSlice';
 import axios from 'axios';
 import { filterByTitle } from '../utils';
 import { useSearchParams } from 'react-router-dom';
@@ -17,7 +17,7 @@ const Home: FC<HomeProps> = () => {
   const { categoryId, sortType, currentPage, searchValue } = useSelector(
     (state: RootState) => state.filter,
   );
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const [pizzas, setPizzas] = useState<Pizza[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -41,7 +41,7 @@ const Home: FC<HomeProps> = () => {
         setFilters({
           currentPage: page,
           categoryId: category,
-          sortType: { property: sortBy, order },
+          sortType: { property: sortBy as SortProperty, order: order as Order },
         }),
       );
 
@@ -55,10 +55,10 @@ const Home: FC<HomeProps> = () => {
   }, [currentPage, sortType, categoryId, searchValue]);
 
   useEffect(() => {
-    setParam(currentPage, initialState.currentPage, 'page');
-    setParam(sortType.property, initialState.sortType.property, 'sortBy');
-    setParam(sortType.order, initialState.sortType.order, 'order');
-    setParam(categoryId, initialState.categoryId, 'category');
+    setParam(currentPage, initialFilterState.currentPage, 'page');
+    setParam(sortType.property, initialFilterState.sortType.property, 'sortBy');
+    setParam(sortType.order, initialFilterState.sortType.order, 'order');
+    setParam(categoryId, initialFilterState.categoryId, 'category');
     setSearchParams(searchParams);
   }, [currentPage, sortType, categoryId]);
 

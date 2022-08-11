@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { sortMethods, SortType } from '../../models';
 
 export interface FilterState {
@@ -8,7 +8,7 @@ export interface FilterState {
   sortType: SortType;
 }
 
-export const initialState: FilterState = {
+export const initialFilterState: FilterState = {
   categoryId: 0,
   currentPage: 1,
   searchValue: '',
@@ -17,29 +17,32 @@ export const initialState: FilterState = {
 
 export const filterSlice = createSlice({
   name: 'filters',
-  initialState,
+  initialState: initialFilterState,
   reducers: {
-    setCategoryId(state, action) {
+    setCategoryId(state: FilterState, action: PayloadAction<number>) {
       state.categoryId = action.payload;
     },
-    changeCategoryId(state, action) {
+    changeCategoryId(state: FilterState, action: PayloadAction<number>) {
       state.categoryId = action.payload;
       state.currentPage = 1;
     },
-    setSortType(state, action) {
+    setSortType(state: FilterState, action: PayloadAction<SortType>) {
       state.sortType = action.payload;
     },
-    setCurrentPage(state, action) {
+    setCurrentPage(state: FilterState, action: PayloadAction<number>) {
       state.currentPage = action.payload;
     },
-    setSearchValue(state, action) {
+    setSearchValue(state: FilterState, action: PayloadAction<string>) {
       state.searchValue = action.payload;
     },
-    changeSearchValue(state, action) {
+    changeSearchValue(state: FilterState, action: PayloadAction<string>) {
       state.searchValue = action.payload;
       state.currentPage = 1;
     },
-    setFilters(state, action) {
+    setFilters(
+      state: FilterState,
+      action: PayloadAction<Pick<FilterState, 'currentPage' | 'categoryId' | 'sortType'>>,
+    ) {
       state.currentPage = action.payload.currentPage;
       state.sortType.property = action.payload.sortType.property;
       state.sortType.order = action.payload.sortType.order;
