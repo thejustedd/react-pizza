@@ -4,12 +4,14 @@ import { sortMethods, SortType } from '../../models';
 export interface FilterState {
   categoryId: number;
   currentPage: number;
+  searchValue: string;
   sortType: SortType;
 }
 
 export const initialState: FilterState = {
   categoryId: 0,
   currentPage: 1,
+  searchValue: '',
   sortType: sortMethods[0],
 };
 
@@ -20,11 +22,22 @@ export const filterSlice = createSlice({
     setCategoryId(state, action) {
       state.categoryId = action.payload;
     },
+    changeCategoryId(state, action) {
+      state.categoryId = action.payload;
+      state.currentPage = 1;
+    },
     setSortType(state, action) {
       state.sortType = action.payload;
     },
     setCurrentPage(state, action) {
       state.currentPage = action.payload;
+    },
+    setSearchValue(state, action) {
+      state.searchValue = action.payload;
+    },
+    changeSearchValue(state, action) {
+      state.searchValue = action.payload;
+      state.currentPage = 1;
     },
     setFilters(state, action) {
       state.currentPage = action.payload.currentPage;
@@ -35,5 +48,13 @@ export const filterSlice = createSlice({
   },
 });
 
-export const { setCategoryId, setSortType, setCurrentPage, setFilters } = filterSlice.actions;
+export const {
+  setCategoryId,
+  setSortType,
+  setCurrentPage,
+  setFilters,
+  setSearchValue,
+  changeSearchValue,
+  changeCategoryId,
+} = filterSlice.actions;
 export const filterReducer = filterSlice.reducer;

@@ -1,30 +1,31 @@
 import styles from './Search.module.scss';
-import { ChangeEvent, FC, useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { SearchContext } from '../../App';
+import { ChangeEvent, FC, useCallback, useEffect, useRef, useState } from 'react';
 import debounce from 'lodash.debounce';
+import { useDispatch } from 'react-redux';
+import { changeSearchValue } from '../../redux/slices/filterSlice';
 
 interface SearchProps {}
 
 const Search: FC<SearchProps> = () => {
   const [value, setValue] = useState('');
-  const { setSearchValue } = useContext(SearchContext)!;
   const inputRef = useRef<HTMLInputElement>(null);
+  const dispatch = useDispatch();
 
   useEffect(() => inputRef.current?.focus(), []);
 
   const updateSearchValue = useCallback(
-    debounce((value: string) => setSearchValue(value), 250),
+    debounce((value: string) => dispatch(changeSearchValue(value)), 250),
     [],
   );
 
-  function search(e: ChangeEvent<HTMLInputElement>) {
+  function changeSearchField(e: ChangeEvent<HTMLInputElement>) {
     setValue(e.target.value);
     updateSearchValue(e.target.value);
   }
 
-  function clearField() {
+  function clearSearchField() {
     setValue('');
-    setSearchValue('');
+    dispatch(changeSearchValue(''));
     inputRef.current?.focus();
   }
 
@@ -68,14 +69,14 @@ const Search: FC<SearchProps> = () => {
           type="text"
           placeholder="Поиск пиццы..."
           value={value}
-          onChange={search}
+          onChange={changeSearchField}
           ref={inputRef}
         />
 
         {!!value && (
           <svg
             className={`${styles.icon} ${styles.clearIcon}`}
-            onClick={clearField}
+            onClick={clearSearchField}
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20">
             <path d="M10 8.586L2.929 1.515 1.515 2.929 8.586 10l-7.071 7.071 1.414 1.414L10 11.414l7.071 7.071 1.414-1.414L11.414 10l7.071-7.071-1.414-1.414L10 8.586z" />
