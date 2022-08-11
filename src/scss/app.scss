@@ -79,6 +79,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 30px;
   }
 
   .content__title {
@@ -140,8 +141,7 @@ body {
     display: flex;
     width: 100%;
     border-top: 1px solid $gray-line;
-    padding-top: 30px;
-    margin-top: 30px;
+    padding: 30px 0;
 
     &-img {
       display: flex;
@@ -241,7 +241,7 @@ body {
   }
 
   &__bottom {
-    margin: 50px 0;
+    margin: 30px 0;
 
     &-details {
       display: flex;
@@ -307,7 +307,7 @@ body {
 
   &--empty {
     margin: 0 auto;
-    width: 560px;
+    width: 570px;
     text-align: center;
 
     h2 {

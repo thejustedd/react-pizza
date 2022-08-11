@@ -1,15 +1,26 @@
-import React, { FC, memo, useState } from 'react';
+import React, { FC, memo, useEffect, useRef, useState } from 'react';
 import { Order, sortLabel, sortMethods, SortProperty, SortType } from '../models';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
+import { useSelector } from 'react-redux';
+import { RootState, useAppDispatch } from '../redux/store';
 import { setSortType } from '../redux/slices/filterSlice';
 
 interface SortProps {}
 
 const Sort: FC<SortProps> = memo(() => {
   const { property, order } = useSelector((state: RootState) => state.filter.sortType);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [isVisible, setIsVisible] = useState(false);
+  const sortRef = useRef(null);
+
+  useEffect(() => {
+    document.body.addEventListener('click', handleClickOutside);
+
+    return () => document.body.removeEventListener('click', handleClickOutside);
+  }, []);
+
+  function handleClickOutside(e: MouseEvent) {
+    if (!e.composedPath().includes(sortRef.current!)) setIsVisible(false);
+  }
 
   function toggleVisibility() {
     setIsVisible((prevState) => !prevState);
@@ -17,7 +28,7 @@ const Sort: FC<SortProps> = memo(() => {
 
   function choiceFilter(sortType: SortType) {
     dispatch(setSortType(sortType));
-    setIsVisible(false);
+    // setIsVisible(false);
   }
 
   function getSortLabel(property: SortProperty, order: Order) {
@@ -25,7 +36,7 @@ const Sort: FC<SortProps> = memo(() => {
   }
 
   return (
-    <div className="sort">
+    <div className="sort" ref={sortRef} onClick={toggleVisibility}>
       <div className="sort__label">
         <svg
           className={`sort__arrow ${isVisible ? 'sort__arrow--rotated' : ''}`}
@@ -40,7 +51,7 @@ const Sort: FC<SortProps> = memo(() => {
           />
         </svg>
         <b>Сортировка по:</b>
-        <span onClick={toggleVisibility}>{getSortLabel(property, order)}</span>
+        <span>{getSortLabel(property, order)}</span>
       </div>
       {isVisible && (
         <div className="sort__popup">

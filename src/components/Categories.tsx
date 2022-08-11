@@ -1,15 +1,19 @@
 import React, { FC, memo } from 'react';
 import { categories } from '../models';
 import { CustomSimpleBar } from './CustomSimpleBar';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
-import { setCategoryId, setCurrentPage } from '../redux/slices/filterSlice';
+import { useSelector } from 'react-redux';
+import { RootState, useAppDispatch } from '../redux/store';
+import { changeCategoryId } from '../redux/slices/filterSlice';
 
 interface CategoriesProps {}
 
 const Categories: FC<CategoriesProps> = memo(() => {
   const categoryId = useSelector((state: RootState) => state.filter.categoryId);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+
+  function changeCategory(index: number) {
+    dispatch(changeCategoryId(index));
+  }
 
   return (
     <div className="categories">
@@ -19,10 +23,7 @@ const Categories: FC<CategoriesProps> = memo(() => {
             <li
               key={index}
               className={index === categoryId ? 'active' : ''}
-              onClick={() => {
-                dispatch(setCategoryId(index));
-                dispatch(setCurrentPage(1));
-              }}>
+              onClick={changeCategory.bind(null, index)}>
               {categoryName}
             </li>
           ))}

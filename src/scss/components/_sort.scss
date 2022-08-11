@@ -3,6 +3,7 @@
 .sort {
   position: relative;
   margin-left: auto;
+  cursor: pointer;
 
   &__arrow {
     margin-right: 8px;
@@ -35,7 +36,7 @@
     right: 0;
     margin-top: 15px;
     background: #fff;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.09);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.09);
     border-radius: 10px;
     overflow: hidden;
     padding: 10px 0;
