@@ -1,15 +1,19 @@
 import styles from './Pagination.module.scss';
 import ReactPaginate from 'react-paginate';
 import { FC, memo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
+import { setCurrentPage } from '../../redux/slices/filterSlice';
 
 interface PaginationProps {
-  currentPage: number;
   pageCount: number;
-  changePage: (page: number) => void;
 }
 
 const Pagination: FC<PaginationProps> = memo(
-  ({ currentPage, pageCount, changePage }) => {
+  ({ pageCount }) => {
+    const currentPage = useSelector((state: RootState) => state.filter.currentPage);
+    const dispatch = useDispatch();
+
     return (
       <>
         <ReactPaginate
@@ -17,7 +21,7 @@ const Pagination: FC<PaginationProps> = memo(
           breakLabel="..."
           previousLabel="<"
           nextLabel=">"
-          onPageChange={(e) => changePage(e.selected + 1)}
+          onPageChange={(e) => dispatch(setCurrentPage(e.selected + 1))}
           pageRangeDisplayed={5}
           pageCount={pageCount}
           renderOnZeroPageCount={() => null}
@@ -26,8 +30,7 @@ const Pagination: FC<PaginationProps> = memo(
       </>
     );
   },
-  (prevProps, nextProps) =>
-    prevProps.currentPage === nextProps.currentPage && prevProps.pageCount === nextProps.pageCount,
+  (prevProps, nextProps) => prevProps.pageCount === nextProps.pageCount,
 );
 
 export { Pagination };
