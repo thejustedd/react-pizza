@@ -7,7 +7,7 @@ export interface FilterState {
   sortType: SortType;
 }
 
-const initialState: FilterState = {
+export const initialState: FilterState = {
   categoryId: 0,
   currentPage: 1,
   sortType: sortMethods[0],
