@@ -1,18 +1,4 @@
-export interface Pizza {
-  id: number;
-  imageUrl: string;
-  title: string;
-  types: number[];
-  sizes: number[];
-  price: number;
-  category: number;
-  rating: number;
-}
-
-export interface GetPizzas {
-  items: Pizza[];
-  count: number;
-}
+export const API_URL = 'https://6290adf9665ea71fe1385b55.mockapi.io/';
 
 export const categories = ['Все', 'Мясные', 'Вегетарианские', 'Гриль', 'Острые', 'Закрытые'];
 export const typeNames = ['тонкое', 'традиционное'];

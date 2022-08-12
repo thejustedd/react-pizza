@@ -2,14 +2,13 @@ import React, { FC } from 'react';
 import { Link } from 'react-router-dom';
 import { Search } from './Search';
 import Logo from './Logo';
-import { useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
+import { useAppSelector } from '../redux/store';
 import { getTotalCountInCart, getTotalPriceInCart } from '../redux/slices/cartSlice';
 
 interface HeaderProps {}
 
 const Header: FC<HeaderProps> = () => {
-  const { items } = useSelector((state: RootState) => state.cart);
+  const { items } = useAppSelector((state) => state.cart);
 
   return (
     <div className="header">

@@ -1,8 +1,8 @@
 import React, { FC, useState } from 'react';
-import { Pizza, typeNames } from '../../models';
-import { RootState, useAppDispatch } from '../../redux/store';
+import { typeNames } from '../../models';
+import { useAppDispatch, useAppSelector } from '../../redux/store';
 import { addCartItem } from '../../redux/slices/cartSlice';
-import { useSelector } from 'react-redux';
+import { Pizza } from '../../redux/slices/pizzasSlice';
 
 interface PizzaBlockProps {
   pizza: Pizza;
@@ -12,8 +12,8 @@ const PizzaBlock: FC<PizzaBlockProps> = ({ pizza }) => {
   const [activeSizeIndex, setActiveSizeIndex] = useState(0);
   const [activeTypeIndex, setActiveTypeIndex] = useState(pizza.types[0]);
   const dispatch = useAppDispatch();
-  const cartItem = useSelector(
-    (state: RootState) => state.cart.items.find((item) => item.id === pizza.id)!,
+  const cartItem = useAppSelector(
+    (state) => state.cart.items.find((item) => item.id === pizza.id)!,
   );
   const addedCount = cartItem ? cartItem.count : 0;
 

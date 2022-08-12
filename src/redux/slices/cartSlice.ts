@@ -18,11 +18,11 @@ const initialCartState: CartState = {
   items: [],
 };
 
-export function getTotalCountInCart(items: { count: number }[]) {
+export function getTotalCountInCart(items: ICartItem[]) {
   return items.reduce((sum, item) => sum + item.count, 0);
 }
 
-export function getTotalPriceInCart(items: { price: number; count: number }[]) {
+export function getTotalPriceInCart(items: ICartItem[]) {
   return items.reduce((sum, item) => sum + item.price * item.count, 0);
 }
 
@@ -34,22 +34,22 @@ const cartSlice = createSlice({
   name: 'cart',
   initialState: initialCartState,
   reducers: {
-    addCartItem(state: CartState, action: PayloadAction<Omit<ICartItem, 'count'>>) {
+    addCartItem(state, action: PayloadAction<Omit<ICartItem, 'count'>>) {
       const foundItem = findItemById(state, action.payload.id);
       foundItem ? foundItem.count++ : state.items.push({ ...action.payload, count: 1 });
     },
-    plusCartItemCount(state: CartState, action: PayloadAction<number>) {
+    plusCartItemCount(state, action: PayloadAction<number>) {
       const foundItem = findItemById(state, action.payload);
       foundItem && (foundItem.count = Math.min(foundItem.count + 1, 100));
     },
-    minusCartItemCount(state: CartState, action: PayloadAction<number>) {
+    minusCartItemCount(state, action: PayloadAction<number>) {
       const foundItem = findItemById(state, action.payload);
       foundItem && (foundItem.count = Math.max(foundItem.count - 1, 1));
     },
-    removeCartItem(state: CartState, action: PayloadAction<number>) {
+    removeCartItem(state, action: PayloadAction<number>) {
       state.items = state.items.filter((item) => item.id !== action.payload);
     },
-    clearCartItems(state: CartState) {
+    clearCartItems(state) {
       state.items = [];
     },
   },

@@ -2,8 +2,7 @@ import { Link } from 'react-router-dom';
 import { FC, RefObject } from 'react';
 import SimpleBar from 'simplebar-react';
 import { isMobileDevice } from '../utils';
-import { RootState, useAppDispatch } from '../redux/store';
-import { useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '../redux/store';
 import CartItem from '../components/CartItem';
 import {
   clearCartItems,
@@ -18,7 +17,7 @@ interface CartProps {
 
 const Cart: FC<CartProps> = ({ appScrollbar }) => {
   const dispatch = useAppDispatch();
-  const items = useSelector((state: RootState) => state.cart.items);
+  const items = useAppSelector((state) => state.cart.items);
 
   function scrollToTop() {
     isMobileDevice

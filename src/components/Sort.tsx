@@ -1,13 +1,12 @@
 import React, { FC, memo, useEffect, useRef, useState } from 'react';
 import { Order, sortLabel, sortMethods, SortProperty, SortType } from '../models';
-import { useSelector } from 'react-redux';
-import { RootState, useAppDispatch } from '../redux/store';
+import { useAppDispatch, useAppSelector } from '../redux/store';
 import { setSortType } from '../redux/slices/filterSlice';
 
 interface SortProps {}
 
 const Sort: FC<SortProps> = memo(() => {
-  const { property, order } = useSelector((state: RootState) => state.filter.sortType);
+  const { property, order } = useAppSelector((state) => state.filter.sortType);
   const dispatch = useAppDispatch();
   const [isVisible, setIsVisible] = useState(false);
   const sortRef = useRef(null);
