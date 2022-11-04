@@ -1,14 +1,14 @@
-import React, { FC, memo } from 'react';
+import React, { FC, memo, useCallback } from 'react';
 import { categories } from '../models';
 import { CustomSimpleBar } from './CustomSimpleBar';
-import { useSelector } from 'react-redux';
-import { RootState, useAppDispatch } from '../redux/store';
-import { changeCategoryId } from '../redux/slices/filterSlice';
+import { useAppDispatch, useAppSelector } from '../redux/store';
+import { selectFilters } from '../redux/filters/selectors';
+import { changeCategoryId } from '../redux/filters/slice';
 
 interface CategoriesProps {}
 
 const Categories: FC<CategoriesProps> = memo(() => {
-  const categoryId = useSelector((state: RootState) => state.filter.categoryId);
+  const { categoryId } = useAppSelector(selectFilters);
   const dispatch = useAppDispatch();
 
   function changeCategory(index: number) {

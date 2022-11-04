@@ -2,30 +2,33 @@ import { Categories } from '../components/Categories';
 import { Sort } from '../components/Sort';
 import { PizzaBlock, Skeleton } from '../components/PizzaBlock';
 import React, { FC, useEffect, useRef, useState } from 'react';
-import { categories, GetPizzas, Order, Pizza, SortProperty } from '../models';
+import { categories, Order, SortProperty } from '../models';
 import { Pagination } from '../components/Pagination';
-import { useSelector } from 'react-redux';
-import { RootState, useAppDispatch } from '../redux/store';
-import { initialFilterState, setFilters } from '../redux/slices/filterSlice';
-import axios from 'axios';
+import { useAppDispatch, useAppSelector } from '../redux/store';
 import { filterByTitle } from '../utils';
 import { useSearchParams } from 'react-router-dom';
+import { selectPizzas } from '../redux/pizzas/selectors';
+import { useStatus } from '../redux/pizzas/functions';
+import { initialFilterState, setFilters } from '../redux/filters/slice';
+import { fetchPizzas } from '../redux/pizzas/asyncActions';
+import { Pizza } from '../redux/pizzas/types';
 
 interface HomeProps {}
 
 const Home: FC<HomeProps> = () => {
-  const { categoryId, sortType, currentPage, searchValue } = useSelector(
-    (state: RootState) => state.filter,
-  );
-  const dispatch = useAppDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [pizzas, setPizzas] = useState<Pizza[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useAppDispatch();
+  const { categoryId, sortType, currentPage, searchValue } = useAppSelector(
+    (state) => state.filter,
+  );
+  const { items: allPizzas } = useAppSelector(selectPizzas);
+  const [filteredPizzas, setFilteredPizzas] = useState(allPizzas);
+  const { isLoading } = useStatus();
   const [itemsCount, setItemsCount] = useState(0);
   const itemsPerPage = 12;
   const isMounted = useRef(false);
   const isLocationFilled = useRef(false);
-  const items = pizzas.map((pizza) => <PizzaBlock key={pizza.id} pizza={pizza} />);
+  const elems = filteredPizzas.map((pizza) => <PizzaBlock key={pizza.id} pizza={pizza} />);
   const skeletons = Array(itemsPerPage)
     .fill(null)
     .map((_, index) => <Skeleton key={index} />);
@@ -34,25 +37,20 @@ const Home: FC<HomeProps> = () => {
     if (window.location.search) {
       const page = Number(searchParams.get('page')) || currentPage;
       const category = Number(searchParams.get('category')) || categoryId;
-      const sortBy = searchParams.get('sortBy') || sortType.property;
-      const order = searchParams.get('order') || sortType.order;
+      const sortBy = (searchParams.get('sortBy') || sortType.property) as SortProperty;
+      const order = (searchParams.get('order') || sortType.order) as Order;
 
       dispatch(
         setFilters({
           currentPage: page,
           categoryId: category,
-          sortType: { property: sortBy as SortProperty, order: order as Order },
+          sortType: { property: sortBy, order },
         }),
       );
 
       isLocationFilled.current = true;
     }
   }, []);
-
-  useEffect(() => {
-    (isMounted.current || !isLocationFilled.current) && fetchPizzas();
-    isMounted.current = true;
-  }, [currentPage, sortType, categoryId, searchValue]);
 
   useEffect(() => {
     setParam(currentPage, initialFilterState.currentPage, 'page');
@@ -66,27 +64,26 @@ const Home: FC<HomeProps> = () => {
     val !== initVal ? searchParams.set(key, val.toString()) : searchParams.delete(key);
   }
 
-  function fetchPizzas() {
-    setIsLoading(true);
+  useEffect(() => {
+    (isMounted.current || !isLocationFilled.current) && fetchAllPizzas();
+    isMounted.current = true;
+  }, [currentPage, sortType, categoryId]);
 
-    const request = `page=${currentPage}&sortBy=${sortType.property}&order=${sortType.order}${
+  async function fetchAllPizzas() {
+    const paramsLine = `page=${currentPage}&sortBy=${sortType.property}&order=${sortType.order}${
       categoryId ? `&category=${categoryId}` : ''
     }`;
 
-    axios
-      .get<GetPizzas>(`https://6290adf9665ea71fe1385b55.mockapi.io/items?${request}`)
-      .then((res) => {
-        const itemsFilteredByTitle = res.data.items.filter((i) => filterByTitle(i, searchValue));
-
-        setItemsCount(itemsFilteredByTitle.length);
-        setPizzas(getItemsPerPage(itemsFilteredByTitle));
-        setIsLoading(false);
-      });
+    dispatch(fetchPizzas(paramsLine));
   }
 
-  function getPageCount() {
-    return itemsCount ? Math.ceil(itemsCount / itemsPerPage) : 1;
-  }
+  useEffect(() => {
+    const filtered = searchValue
+      ? allPizzas.filter((i) => filterByTitle(i, searchValue))
+      : allPizzas;
+    setItemsCount(filtered.length);
+    setFilteredPizzas(getItemsPerPage(filtered));
+  }, [allPizzas, searchValue]);
 
   function getItemsPerPage(items: Pizza[]) {
     return items.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -96,24 +93,26 @@ const Home: FC<HomeProps> = () => {
     return categories[categoryId];
   }
 
+  function getPageCount() {
+    return itemsCount ? Math.ceil(itemsCount / itemsPerPage) : 1;
+  }
+
   return (
-    <>
-      <div className="container">
-        <div className="content__top">
-          <Categories />
-          <Sort />
-        </div>
-        <h2 className="content__title">
-          {getCategoryName()} пиццы ({itemsCount})
-        </h2>
-        {!isLoading && !items.length ? (
-          <p style={{ marginBottom: '60px' }}>К сожалению по заданным фильтрам пиццы не найдено</p>
-        ) : (
-          <div className="content__items">{isLoading ? skeletons : items}</div>
-        )}
-        <Pagination pageCount={getPageCount()} />
+    <div className='container'>
+      <div className='content__top'>
+        <Categories />
+        <Sort />
       </div>
-    </>
+      <h2 className='content__title'>
+        {getCategoryName()} пиццы ({itemsCount})
+      </h2>
+      {!isLoading && !elems.length ? (
+        <p style={{ marginBottom: '60px' }}>К сожалению по заданным фильтрам пиццы не найдено</p>
+      ) : (
+        <div className='content__items'>{isLoading ? skeletons : elems}</div>
+      )}
+      <Pagination pageCount={getPageCount()} />
+    </div>
   );
 };
 
