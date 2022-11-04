@@ -1,8 +1,8 @@
 import styles from './Search.module.scss';
 import { ChangeEvent, FC, useCallback, useEffect, useRef, useState } from 'react';
 import debounce from 'lodash.debounce';
-import { changeSearchValue } from '../../redux/slices/filterSlice';
 import { useAppDispatch } from '../../redux/store';
+import { changeSearchValue } from '../../redux/filters/slice';
 
 interface SearchProps {}
 

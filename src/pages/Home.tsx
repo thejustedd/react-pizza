@@ -5,10 +5,13 @@ import React, { FC, useEffect, useRef, useState } from 'react';
 import { categories, Order, SortProperty } from '../models';
 import { Pagination } from '../components/Pagination';
 import { useAppDispatch, useAppSelector } from '../redux/store';
-import { initialFilterState, setFilters } from '../redux/slices/filterSlice';
 import { filterByTitle } from '../utils';
 import { useSearchParams } from 'react-router-dom';
-import { fetchPizzas, Pizza, useStatus } from '../redux/slices/pizzasSlice';
+import { selectPizzas } from '../redux/pizzas/selectors';
+import { useStatus } from '../redux/pizzas/functions';
+import { initialFilterState, setFilters } from '../redux/filters/slice';
+import { fetchPizzas } from '../redux/pizzas/asyncActions';
+import { Pizza } from '../redux/pizzas/types';
 
 interface HomeProps {}
 
@@ -18,7 +21,7 @@ const Home: FC<HomeProps> = () => {
   const { categoryId, sortType, currentPage, searchValue } = useAppSelector(
     (state) => state.filter,
   );
-  const allPizzas = useAppSelector((state) => state.pizza.items);
+  const { items: allPizzas } = useAppSelector(selectPizzas);
   const [filteredPizzas, setFilteredPizzas] = useState(allPizzas);
   const { isLoading } = useStatus();
   const [itemsCount, setItemsCount] = useState(0);
@@ -95,23 +98,21 @@ const Home: FC<HomeProps> = () => {
   }
 
   return (
-    <>
-      <div className="container">
-        <div className="content__top">
-          <Categories />
-          <Sort />
-        </div>
-        <h2 className="content__title">
-          {getCategoryName()} пиццы ({itemsCount})
-        </h2>
-        {!isLoading && !elems.length ? (
-          <p style={{ marginBottom: '60px' }}>К сожалению по заданным фильтрам пиццы не найдено</p>
-        ) : (
-          <div className="content__items">{isLoading ? skeletons : elems}</div>
-        )}
-        <Pagination pageCount={getPageCount()} />
+    <div className='container'>
+      <div className='content__top'>
+        <Categories />
+        <Sort />
       </div>
-    </>
+      <h2 className='content__title'>
+        {getCategoryName()} пиццы ({itemsCount})
+      </h2>
+      {!isLoading && !elems.length ? (
+        <p style={{ marginBottom: '60px' }}>К сожалению по заданным фильтрам пиццы не найдено</p>
+      ) : (
+        <div className='content__items'>{isLoading ? skeletons : elems}</div>
+      )}
+      <Pagination pageCount={getPageCount()} />
+    </div>
   );
 };
 

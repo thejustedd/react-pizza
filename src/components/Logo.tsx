@@ -1,8 +1,8 @@
 import React, { FC, MouseEvent } from 'react';
 import logoSvg from '../assets/img/pizza-logo.svg';
-import { initialFilterState, setFilters } from '../redux/slices/filterSlice';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../redux/store';
+import { setDefaultFilters } from '../redux/filters/slice';
 
 interface LogoProps {}
 
@@ -12,21 +12,19 @@ const Logo: FC<LogoProps> = () => {
 
   function handleClick(e: MouseEvent<HTMLAnchorElement>) {
     e.preventDefault();
-    dispatch(setFilters(initialFilterState));
+    dispatch(setDefaultFilters());
     navigate('/');
   }
 
   return (
-    <a href="/" onClick={handleClick}>
-      <div className="header__logo">
-        <img width="38" src={logoSvg} alt="Pizza logo" />
-        <div>
-          <h1>React Pizza</h1>
-          <p>самая вкусная пицца во вселенной</p>
-        </div>
+    <a className="logo" href="/" onClick={handleClick}>
+      <img width="38" src={logoSvg} alt="Pizza logo" />
+      <div>
+        <h1>React Pizza</h1>
+        <p>самая вкусная пицца во вселенной</p>
       </div>
     </a>
   );
 };
 
-export default Logo;
+export { Logo };

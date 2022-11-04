@@ -1,11 +1,8 @@
 import { FC } from 'react';
-import {
-  minusCartItemCount,
-  ICartItem,
-  plusCartItemCount,
-  removeCartItem,
-} from '../redux/slices/cartSlice';
 import { useAppDispatch } from '../redux/store';
+import { minusCartItemCount, plusCartItemCount, removeCartItem } from '../redux/cart/slice';
+import { ICartItem } from '../redux/cart/types';
+import { Link } from 'react-router-dom';
 
 interface CartItemProps {
   item: ICartItem;
@@ -18,18 +15,23 @@ const CartItem: FC<CartItemProps> = ({ item }) => {
   return (
     <div className="cart__item">
       <div className="cart__item-img">
-        <img className="pizza-block__image" src={imageUrl} alt={title} />
+        <Link to={`/pizzas/${id}`}>
+          <img className="pizza-block__image" src={imageUrl} alt={title} />
+        </Link>
       </div>
       <div className="cart__item-info">
-        <h3>{title}</h3>
+        <Link to={`/pizzas/${id}`}>
+          <h3>{title}</h3>
+        </Link>
         <p>
           {type}, {size} см.
         </p>
       </div>
       <div className="cart__item-count">
-        <div
+        <button
           className="button button--outline button--circle cart__item-count-minus"
-          onClick={() => dispatch(minusCartItemCount(id))}>
+          onClick={() => dispatch(minusCartItemCount(id))}
+          disabled={count <= 1}>
           <svg
             width="10"
             height="10"
@@ -45,9 +47,9 @@ const CartItem: FC<CartItemProps> = ({ item }) => {
               fill="#EB5A1E"
             />
           </svg>
-        </div>
+        </button>
         <b>{count}</b>
-        <div
+        <button
           className="button button--outline button--circle cart__item-count-plus"
           onClick={() => dispatch(plusCartItemCount(id))}>
           <svg
@@ -65,13 +67,13 @@ const CartItem: FC<CartItemProps> = ({ item }) => {
               fill="#EB5A1E"
             />
           </svg>
-        </div>
+        </button>
       </div>
       <div className="cart__item-price">
         <b>{price} ₽</b>
       </div>
       <div className="cart__item-remove" onClick={() => dispatch(removeCartItem(id))}>
-        <div className="button button--outline button--circle">
+        <button className="button button--outline button--circle">
           <svg
             width="10"
             height="10"
@@ -87,10 +89,10 @@ const CartItem: FC<CartItemProps> = ({ item }) => {
               fill="#EB5A1E"
             />
           </svg>
-        </div>
+        </button>
       </div>
     </div>
   );
 };
 
-export default CartItem;
+export { CartItem };

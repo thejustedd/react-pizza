@@ -23,4 +23,4 @@ const CartEmpty: FC<CartEmptyProps> = () => {
   );
 };
 
-export default CartEmpty;
+export { CartEmpty };

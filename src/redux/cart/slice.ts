@@ -1,34 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-export interface ICartItem {
-  id: number;
-  title: string;
-  price: number;
-  imageUrl: string;
-  type: string;
-  size: number;
-  count: number;
-}
-
-interface CartState {
-  items: ICartItem[];
-}
+import { getCartFromLStorage } from '../../utils';
+import { CartState, ICartItem } from './types';
+import { findItemById } from './functions';
 
 const initialCartState: CartState = {
-  items: [],
+  items: getCartFromLStorage(), // TODO: Переделать работу с Local Storage
 };
-
-export function getTotalCountInCart(items: ICartItem[]) {
-  return items.reduce((sum, item) => sum + item.count, 0);
-}
-
-export function getTotalPriceInCart(items: ICartItem[]) {
-  return items.reduce((sum, item) => sum + item.price * item.count, 0);
-}
-
-function findItemById(state: CartState, id: number) {
-  return state.items.find((item) => item.id === id);
-}
 
 const cartSlice = createSlice({
   name: 'cart',

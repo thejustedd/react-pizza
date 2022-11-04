@@ -3,13 +3,11 @@ import { FC, RefObject } from 'react';
 import SimpleBar from 'simplebar-react';
 import { isMobileDevice } from '../utils';
 import { useAppDispatch, useAppSelector } from '../redux/store';
-import CartItem from '../components/CartItem';
-import {
-  clearCartItems,
-  getTotalCountInCart,
-  getTotalPriceInCart,
-} from '../redux/slices/cartSlice';
-import CartEmpty from '../components/CartEmpty';
+import { CartItem } from '../components/CartItem';
+import { CartEmpty } from '../components/CartEmpty';
+import { selectCart } from '../redux/cart/selectors';
+import { clearCartItems } from '../redux/cart/slice';
+import { getTotalCountInCart, getTotalPriceInCart } from '../redux/cart/functions';
 
 interface CartProps {
   appScrollbar: RefObject<SimpleBar>;
@@ -17,7 +15,7 @@ interface CartProps {
 
 const Cart: FC<CartProps> = ({ appScrollbar }) => {
   const dispatch = useAppDispatch();
-  const items = useAppSelector((state) => state.cart.items);
+  const { items } = useAppSelector(selectCart);
 
   function scrollToTop() {
     isMobileDevice
@@ -145,9 +143,9 @@ const Cart: FC<CartProps> = ({ appScrollbar }) => {
 
                 <span>Вернуться назад</span>
               </Link>
-              <div className="button pay-btn">
+              <button className="button pay-btn">
                 <span>Оплатить сейчас</span>
-              </div>
+              </button>
             </div>
           </div>
         </div>

@@ -1,0 +1,30 @@
+.root {
+  border-bottom: 1px solid #f6f6f6;
+
+  .list {
+    padding: 15px 0;
+  }
+
+  span {
+    &:not(:last-child) {
+      &::after {
+        content: '>';
+        padding: 0 10px;
+      }
+    }
+
+    a {
+      transition: background-color 0.3s ease-out;
+
+      &:hover {
+        text-decoration: underline;
+      }
+
+      &.active {
+        pointer-events: none;
+        background-color: blue;
+        color: blue;
+      }
+    }
+  }
+}
